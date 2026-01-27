@@ -1,27 +1,29 @@
-import db from "../../../lib/db";
 import { getNow } from "../../../lib/time";
+import { getPaste, updatePaste } from "../../../lib/db";
 
 export default function handler(req, res) {
   const { id } = req.query;
   const now = getNow(req);
 
-  const paste = db.prepare(
-    "SELECT * FROM pastes WHERE id = ?"
-  ).get(id);
+  const paste = getPaste(id);
 
-  if (!paste) return res.status(404).json({ error: "Not found" });
+  if (!paste) {
+    return res.status(404).json({ error: "Not found" });
+  }
 
-  if (paste.expires_at && now > paste.expires_at)
+  // TTL check
+  if (paste.expires_at && now > paste.expires_at) {
     return res.status(404).json({ error: "Expired" });
+  }
 
+  // View count check
   if (paste.remaining_views !== null) {
-    if (paste.remaining_views <= 0)
+    if (paste.remaining_views <= 0) {
       return res.status(404).json({ error: "View limit exceeded" });
+    }
 
-    db.prepare(
-      "UPDATE pastes SET remaining_views = remaining_views - 1 WHERE id = ?"
-    ).run(id);
     paste.remaining_views -= 1;
+    updatePaste(paste);
   }
 
   res.status(200).json({
