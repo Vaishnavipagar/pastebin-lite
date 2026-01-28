@@ -19,18 +19,14 @@ The application is built with **Next.js** and deployed on **Vercel**.
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Deployment Link
 
 **Production URL:**  
 https://pastebin-lite-khaki-seven.vercel.app
 
 ---
 
-## 📂 GitHub Repository
 
-https://github.com/Vaishnavipagar/pastebin-lite
-
----
 
 ## ✨ Features
 
